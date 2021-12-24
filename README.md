@@ -2,4 +2,4 @@
 
 Запуск игры: 
 
-'/dist/GandalfDance.exe'
+`/dist/GandalfDance.exe`
