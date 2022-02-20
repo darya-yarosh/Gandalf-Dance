@@ -12,5 +12,5 @@
 1) Загружаем библиотеки через консоль:
 `pip install pygame`
 `pip install pyganim`
-2) Запускаем код:
-`/dist/GandalfDance.exe`
+2) Открываем через IDLE файл с кодом:
+`/GandalfDance.py`
