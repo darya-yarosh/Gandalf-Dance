@@ -466,12 +466,13 @@ def game(lvl):
                     clickTap.blit(screen, (355,602))
 
         for note in platforms:
-            if note.rect.bottom == 700:
+            if note.rect.bottom >= 700:
                 soundPath = getFilePath('sound.wav')
                 sound = pygame.mixer.Sound(soundPath)
                 pygame.mixer.Channel(0).play(sound, maxtime=200)
                 badFlag += 1
                 HP -= 1
+                platforms.remove(note)
 
         if badFlag >= 7:
                 pygame.mixer.music.stop()
