@@ -318,7 +318,6 @@ def tutorial():
  
         pygame.display.update()
         mainClock.tick(60)    
-        
     
 def game(lvl):
     running = True
@@ -333,52 +332,46 @@ def game(lvl):
 
     entities = pygame.sprite.Group()
 
+    NOTES = []
     platforms = []
-    speed = 0
+    Y = 400
+    NOTES_SPEED = 0
+
     if lvl == lvl1:
-        y = 400
-        speed = 2
-        lvl1Path = getFilePath('lvl1.txt')
-        with open(lvl1Path, 'r') as f:
-            notes = f.read().splitlines()
+        NOTES = loadNotes('lvl1.txt')
+        NOTES_SPEED = 2
     elif lvl == lvl2:
-        y = 400
-        speed = 3
-        lvl2Path = getFilePath('lvl2.txt')
-        with open(lvl2Path, 'r') as f:
-            notes = f.read().splitlines()
+        NOTES = loadNotes('lvl2.txt')
+        NOTES_SPEED = 3
     elif lvl == lvl3:
-        y = 400
-        lvl3Path = getFilePath('lvl3.txt')
-        with open(lvl3Path, 'r') as f:
-            notes = f.read().splitlines()
-        speed = 4
-        
-    for row in notes:
+        NOTES = loadNotes('lvl3.txt')
+        NOTES_SPEED = 4
+
+    for row in NOTES:
         colInd = 0
         for col in row:
             colInd += 1
             if col == '1':
                 if colInd == 1:
-                    pf = Note(55, y, speed)
+                    pf = Note(55, Y, NOTES_SPEED)
                     platforms.append(pf)
                     entities.add(pf)
                 if colInd == 2:
-                    pf = Note(155, y, speed)
+                    pf = Note(155, Y, NOTES_SPEED)
                     platforms.append(pf)
                     entities.add(pf)
                 if colInd == 3:
-                    pf = Note(255, y, speed)
+                    pf = Note(255, Y, NOTES_SPEED)
                     platforms.append(pf)
                     entities.add(pf)
                 if colInd == 4:
-                    pf = Note(355, y, speed)
+                    pf = Note(355, Y, NOTES_SPEED)
                     platforms.append(pf)
                     entities.add(pf)
         if lvl == lvl1:
-            y -= 30
+            Y -= 30
         else:
-            y -= 26
+            Y -= 26
     
     points = 0 
     badFlag = 0
@@ -408,76 +401,35 @@ def game(lvl):
                         pygame.mixer.music.load(musicPath)
                         pygame.mixer.music.play(loops=-1)
             if event.type == KEYDOWN:
-                noteClick = False
                 if event.key == K_a:
-                    for note in platforms:
-                        if panelA.colliderect(note) == True:
-                            points += 10
-                            noteClick = True
-                            platforms.remove(note)
-                    if noteClick == False:
-                        soundPath = getFilePath('sound.wav')
-                        sound = pygame.mixer.Sound(soundPath)
-                        pygame.mixer.Channel(0).play(sound, maxtime=200)
-                        badFlag += 1
-                        HP -= 1
+                    isNoteClick = checkKeyTap(platforms, panelA)
+                    points, HP, badFlag = updateLvlInfo(isNoteClick, points, HP, badFlag)
                     clickTap.blit(screen, (55,602))
                         
                 if event.key == K_s:
-                    for note in platforms:
-                        if panelW.colliderect(note) == True:
-                            points += 10
-                            noteClick = True
-                            platforms.remove(note)
-                    if noteClick == False:
-                        soundPath = getFilePath('sound.wav')
-                        sound = pygame.mixer.Sound(soundPath)
-                        pygame.mixer.Channel(0).play(sound, maxtime=200)
-                        badFlag += 1
-                        HP -= 1
+                    isNoteClick = checkKeyTap(platforms, panelW)
+                    points, HP, badFlag = updateLvlInfo(isNoteClick, points, HP, badFlag)
                     clickTap.blit(screen, (155,602))
                         
                 if event.key == K_k:
-                    for note in platforms:
-                        if panelK.colliderect(note) == True:
-                            points += 10
-                            noteClick = True
-                            platforms.remove(note)
-                    if noteClick == False:
-                        soundPath = getFilePath('sound.wav')
-                        sound = pygame.mixer.Sound(soundPath)
-                        pygame.mixer.Channel(0).play(sound, maxtime=200)
-                        badFlag += 1
-                        HP -= 1
+                    isNoteClick = checkKeyTap(platforms, panelK)
+                    points, HP, badFlag = updateLvlInfo(isNoteClick, points, HP, badFlag)
                     clickTap.blit(screen, (255,602))
 
                 if event.key == K_l:
-                    for note in platforms:
-                        if panelL.colliderect(note) == True:
-                            points += 10
-                            noteClick = True
-                            platforms.remove(note)
-                    if noteClick == False:
-                        soundPath = getFilePath('sound.wav')
-                        sound = pygame.mixer.Sound(soundPath)
-                        pygame.mixer.Channel(0).play(sound, maxtime=200)
-                        badFlag += 1
-                        HP -= 1
+                    isNoteClick = checkKeyTap(platforms, panelL)
+                    points, HP, badFlag = updateLvlInfo(isNoteClick, points, HP, badFlag)
                     clickTap.blit(screen, (355,602))
 
         for note in platforms:
-            if note.rect.bottom >= 700:
-                soundPath = getFilePath('sound.wav')
-                sound = pygame.mixer.Sound(soundPath)
-                pygame.mixer.Channel(0).play(sound, maxtime=200)
-                badFlag += 1
-                HP -= 1
+            if note.rect.bottom >= 730:
+                points, HP, badFlag = updateLvlInfo(False, points, HP, badFlag)
                 platforms.remove(note)
 
         if badFlag >= 7:
-                pygame.mixer.music.stop()
-                gameOver()
-                running = False
+            pygame.mixer.music.stop()
+            gameOver()
+            running = False
                 
         screen.blit(panel, (55,602))
         screen.blit(panel, (155,602))
@@ -489,42 +441,62 @@ def game(lvl):
             e.update(Click)
         screen.blit(bgGameUp, (0, 0))
         
-        
         if lvl == lvl1:
-            draw_text('lvl1', font, (255, 255, 255), screen, 25, 20)
-            draw_text(str(points), font, (255, 255, 255), screen, 25, 60)
-            draw_text('HP', font, (255, 255, 255), screen, 25, 100)
-            draw_text(str(HP), font, (255, 255, 255), screen, 65, 100)
+            drawLvlInfo('lvl1', points, HP)
         elif lvl == lvl2:
-            draw_text('lvl2', font, (255, 255, 255), screen, 25, 20)
-            draw_text(str(points), font, (255, 255, 255), screen, 25, 60)
-            draw_text('HP', font, (255, 255, 255), screen, 25, 100)
-            draw_text(str(HP), font, (255, 255, 255), screen, 65, 100)
+            drawLvlInfo('lvl2', points, HP)
         elif lvl == lvl3:
-            draw_text('lvl3', font, (255, 255, 255), screen, 25, 20)
-            draw_text(str(points), font, (255, 255, 255), screen, 25, 60)
-            draw_text('HP', font, (255, 255, 255), screen, 25, 100)
-            draw_text(str(HP), font, (255, 255, 255), screen, 65, 100)
+            drawLvlInfo('lvl3', points, HP)
         
         Anim.blit(screen, (20,20))
 
         pygame.display.update()
         pygame.display.flip()
- 
+
+def loadNotes(lvlFileName):
+    lvlPath = getFilePath(lvlFileName)
+    with open(lvlPath, 'r') as f:
+        notes = f.read().splitlines()
+    return notes
+
+def checkKeyTap(platforms, panelKey):
+    isNoteClick = False
+    for note in platforms:
+        if panelKey.colliderect(note) == True:
+            isNoteClick = True
+            platforms.remove(note)
+    return isNoteClick
+
+def updateLvlInfo(isNoteClick, points, HP, badFlag):
+    if isNoteClick == True:
+        points += 10
+    elif isNoteClick == False:
+        soundPath = getFilePath('sound.wav')
+        sound = pygame.mixer.Sound(soundPath)
+        pygame.mixer.Channel(0).play(sound, maxtime=200)
+        badFlag += 1
+        HP -= 1
+    return points, HP, badFlag
+
+def drawLvlInfo(lvlName, points, HP):
+    draw_text(lvlName, font, (255, 255, 255), screen, 25, 20)
+    draw_text(str(points), font, (255, 255, 255), screen, 25, 60)
+    draw_text('HP', font, (255, 255, 255), screen, 25, 100)
+    draw_text(str(HP), font, (255, 255, 255), screen, 65, 100)
+
 def creditspage():
     running = True
     click = False
     while running:
-        
         screen.blit(bgCredits,(0,0))
         
-        mx, my = pygame.mouse.get_pos()
+        mouse_x, mouse_y = pygame.mouse.get_pos()
         
         button_Back = pygame.Rect(172, 552, 161, 65)
         screen.blit(buttonBack, (170,550))
 
         if click:
-            if button_Back.collidepoint((mx, my)):
+            if button_Back.collidepoint((mouse_x, mouse_y)):
                 running = False
             else:
                 click = False
@@ -547,7 +519,6 @@ def gameOver():
     pygame.mixer.music.play()
     click = False
     while running:
-        
         screen.blit(bgGameOver, (0,0))
 
         mx, my = pygame.mouse.get_pos()
@@ -667,16 +638,16 @@ def pause():
     while running:
         screen.blit(bgPause, (0, 0))
         
-        mx, my = pygame.mouse.get_pos()
+        mouse_x, mouse_y = pygame.mouse.get_pos()
 
         button_Yes = pygame.Rect(172, 482, 161, 65)
         button_No = pygame.Rect(172, 577, 161, 65)
         
-        if button_Yes.collidepoint((mx, my)):
+        if button_Yes.collidepoint((mouse_x, mouse_y)):
             if click:
                 running = False
                 return False
-        if button_No.collidepoint((mx, my)):
+        if button_No.collidepoint((mouse_x, mouse_y)):
             if click:
                 running = False
                 return True
