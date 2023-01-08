@@ -1,56 +1,43 @@
 import sys
-import os
 
 import pygame
 import pyganim
 import pygame_textinput
 from pygame.locals import *
 
-def resource_path(relative):
-    if hasattr(sys, "_MEIPASS"):
-        return os.path.join(sys._MEIPASS, relative)
-    return os.path.join(relative)
+import files_manager
 
-def getFilePath(filename):
-    FOLDER = 'Files'
-    return resource_path(os.path.join(FOLDER, filename))
+bgMenu = files_manager.loadFile('bgMenu.png')
+bgCredits = files_manager.loadFile('bgCredits.png')
+bgPause = files_manager.loadFile('bgPause.png')
+bgChoose = files_manager.loadFile('bgChoose.png')
+bgGame = files_manager.loadFile('bgGame1.png')
+bgGameUp = files_manager.loadFile('bgGameUp.png')
+bgGameOver = files_manager.loadFile('bgGameOver.png')
+bgWinNext = files_manager.loadFile('bgWinNext.png')
+bgWin = files_manager.loadFile('bgWin.png')
+bgTutor1 = files_manager.loadFile('bgTutorial1.png')
+bgTutor2 = files_manager.loadFile('bgTutorial2.png')
+bgGameEnd = files_manager.loadFile('bgGameEnd.png')
+bgSaveF = files_manager.loadFile('bgSaveF.png')
+bgSaveT = files_manager.loadFile('bgSaveT.png')
+button1 = files_manager.loadFile('button1.png')
+button2 = files_manager.loadFile('button2.png')
+button3 = files_manager.loadFile('button3.png')
+buttonYes = files_manager.loadFile('buttonYes.png')
+buttonNo = files_manager.loadFile('buttonNo.png')
+buttonLvL_1 = files_manager.loadFile('lvl1.png')
+buttonLvL_2 = files_manager.loadFile('lvl2.png')
+buttonLvL_3 = files_manager.loadFile('lvl3.png')
+buttonBack = files_manager.loadFile('back.png')
+buttonLvL_2X = files_manager.loadFile('lvl2block.png')
+buttonLvL_3X = files_manager.loadFile('lvl3block.png')
+note = files_manager.loadFile('note.png')
+panel = files_manager.loadFile('click.png')
+panelTap = files_manager.loadFile('click2.png')
 
-def loadFile(filename):
-    filePath = getFilePath(filename)
-    file = pygame.image.load(filePath)
-    return file
-
-bgMenu = loadFile('bgMenu.png')
-bgCredits = loadFile('bgCredits.png')
-bgPause = loadFile('bgPause.png')
-bgChoose = loadFile('bgChoose.png')
-bgGame = loadFile('bgGame1.png')
-bgGameUp = loadFile('bgGameUp.png')
-bgGameOver = loadFile('bgGameOver.png')
-bgWinNext = loadFile('bgWinNext.png')
-bgWin = loadFile('bgWin.png')
-bgTutor1 = loadFile('bgTutorial1.png')
-bgTutor2 = loadFile('bgTutorial2.png')
-bgGameEnd = loadFile('bgGameEnd.png')
-bgSaveF = loadFile('bgSaveF.png')
-bgSaveT = loadFile('bgSaveT.png')
-button1 = loadFile('button1.png')
-button2 = loadFile('button2.png')
-button3 = loadFile('button3.png')
-buttonYes = loadFile('buttonYes.png')
-buttonNo = loadFile('buttonNo.png')
-buttonLvL_1 = loadFile('lvl1.png')
-buttonLvL_2 = loadFile('lvl2.png')
-buttonLvL_3 = loadFile('lvl3.png')
-buttonBack = loadFile('back.png')
-buttonLvL_2X = loadFile('lvl2block.png')
-buttonLvL_3X = loadFile('lvl3block.png')
-note = loadFile('note.png')
-panel = loadFile('click.png')
-panelTap = loadFile('click2.png')
-
-AnimFirstPath = getFilePath('G01.png')
-AnimSecondPath = getFilePath('G03.png')
+AnimFirstPath = files_manager.getFilePath('G01.png')
+AnimSecondPath = files_manager.getFilePath('G03.png')
 Anim = pyganim.PygAnimation([(AnimFirstPath, 460), (AnimSecondPath, 460)])
 Anim.play()
 clickTap = pyganim.PygAnimation([(panelTap, 460)])
@@ -59,10 +46,10 @@ clickTap.play()
 MUSIC_END = pygame.USEREVENT+1
 pygame.mixer.music.set_endevent(MUSIC_END)
 
-save = open(getFilePath('save.txt'))
-lvl1 = open(getFilePath('lvl1.txt'))
-lvl2 = open(getFilePath('lvl2.txt'))
-lvl3 = open(getFilePath('lvl3.txt'))
+save = open(files_manager.getFilePath('save.txt'))
+lvl1 = open(files_manager.getFilePath('lvl1.txt'))
+lvl2 = open(files_manager.getFilePath('lvl2.txt'))
+lvl3 = open(files_manager.getFilePath('lvl3.txt'))
 
 FLAG_LVL2 = False
 FLAG_LVL3 = False
@@ -76,7 +63,7 @@ pygame.init()
 textinput = pygame_textinput.TextInput()
 pygame.display.set_caption('Gandalf Dance!')
 screen = pygame.display.set_mode((500, 700),0,32)
-fontPath = getFilePath('pixel.ttf')
+fontPath = files_manager.getFilePath('pixel.ttf')
 font = pygame.font.Font(fontPath,50)
 fontName = pygame.font.Font(fontPath,70)
 fontScore = pygame.font.Font(fontPath, 120)
@@ -110,7 +97,7 @@ def draw_text(text, font, color, surface, x, y):
 click = False
  
 def main_menu():
-    musicPath = getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
+    musicPath = files_manager.getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
     pygame.mixer.music.load(musicPath)
     pygame.mixer.music.play(loops=-1)
     global FLAG_START
@@ -159,7 +146,7 @@ def createAccount():
     global FLAG_LVL3
     global FLAG_START
     while running:
-        savePath = getFilePath('save.txt')
+        savePath = files_manager.getFilePath('save.txt')
         with open(savePath, "r") as file:
             name = file.read().splitlines()
             str1 = name[0]
@@ -186,7 +173,7 @@ def createAccount():
             if button_Next.collidepoint((mx, my)):
                 if click:
                     if len(textinput.get_text())>=1:
-                        savePath = getFilePath('save.txt')
+                        savePath = files_manager.getFilePath('save.txt')
                         with open(savePath, "w") as file:
                             file.write(textinput.get_text())
                             file.write('\nFalse')
@@ -321,7 +308,7 @@ def tutorial():
     
 def game(lvl):
     running = True
-    musicPath = getFilePath('music.mp3')
+    musicPath = files_manager.getFilePath('music.mp3')
     pygame.mixer.music.load(musicPath)
     pygame.mixer.music.play()
 
@@ -397,7 +384,7 @@ def game(lvl):
                         pygame.mixer.music.unpause()
                     else:
                         running = False
-                        musicPath = getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
+                        musicPath = files_manager.getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
                         pygame.mixer.music.load(musicPath)
                         pygame.mixer.music.play(loops=-1)
             if event.type == KEYDOWN:
@@ -454,7 +441,7 @@ def game(lvl):
         pygame.display.flip()
 
 def loadNotes(lvlFileName):
-    lvlPath = getFilePath(lvlFileName)
+    lvlPath = files_manager.getFilePath(lvlFileName)
     with open(lvlPath, 'r') as f:
         notes = f.read().splitlines()
     return notes
@@ -471,7 +458,7 @@ def updateLvlInfo(isNoteClick, points, HP, badFlag):
     if isNoteClick == True:
         points += 10
     elif isNoteClick == False:
-        soundPath = getFilePath('sound.wav')
+        soundPath = files_manager.getFilePath('sound.wav')
         sound = pygame.mixer.Sound(soundPath)
         pygame.mixer.Channel(0).play(sound, maxtime=200)
         badFlag += 1
@@ -514,7 +501,7 @@ def creditspage():
 
 def gameOver():
     running = True
-    gameOverMusicPath = getFilePath('Game Over.mp3')
+    gameOverMusicPath = files_manager.getFilePath('Game Over.mp3')
     pygame.mixer.music.load(gameOverMusicPath)
     pygame.mixer.music.play()
     click = False
@@ -529,7 +516,7 @@ def gameOver():
         if click:
             if button_Back.collidepoint((mx, my)):
                 running = False
-                musicPath = getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
+                musicPath = files_manager.getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
                 pygame.mixer.music.load(musicPath)
                 pygame.mixer.music.play(loops=-1)
             else:
@@ -550,7 +537,7 @@ def gameOver():
 
 def win(lvl, point, miss):
     running = True
-    winMusicPath = getFilePath('HeatleyBros - 8 Bit Win.mp3')
+    winMusicPath = files_manager.getFilePath('HeatleyBros - 8 Bit Win.mp3')
     pygame.mixer.music.load(winMusicPath)
     pygame.mixer.music.play(loops=-1)
     global FLAG_LVL2
@@ -592,7 +579,7 @@ def win(lvl, point, miss):
             if button_Back.collidepoint((mx, my)):
                 if lvl == lvl1:
                     FLAG_LVL2 = True
-                    savePath = getFilePath('save.txt')
+                    savePath = files_manager.getFilePath('save.txt')
                     with open(savePath, "r") as file:
                         name = file.read().splitlines()
                     with open(savePath, "w") as file:
@@ -602,7 +589,7 @@ def win(lvl, point, miss):
                         file.write(name[2])
                 if lvl == lvl2:
                     FLAG_LVL3 = True
-                    savePath = getFilePath('save.txt')
+                    savePath = files_manager.getFilePath('save.txt')
                     with open(savePath, "r") as file:
                         name = file.read().splitlines()
                     with open(savePath, "w") as file:
@@ -614,7 +601,7 @@ def win(lvl, point, miss):
                     FLAG_WIN = True
                 running = False
                 choose()
-                musicPath = getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
+                musicPath = files_manager.getFilePath('Epic Sax Guy - 8-bit Remix.mp3')
                 pygame.mixer.music.load(musicPath)
                 pygame.mixer.music.play(loops=-1)
             else:
